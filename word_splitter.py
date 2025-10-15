@@ -1,0 +1,5 @@
+a=input('enter a sentence')
+b=a.split()
+c="-".join(b)
+print(b)
+print(c)
