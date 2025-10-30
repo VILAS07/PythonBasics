@@ -1,12 +1,13 @@
-def inad(c):
-    return round(c/22.6,2)
-
-def inud(c):
-    return round(c/83,2)
-
-
+def Currency(v,c):
+    if c.lower()=='aed':
+        return round(v/22.6,2)
+    elif c.lower() == 'usd':
+        return round(v / 83, 2)
 
 
-c=int(input('Enter the indian Rupees : '))
-print("AED :" ,inad(c))
-print("USD :",inud(c))
+
+
+
+v=int(input('Enter the indian Rupees : '))
+c=input('Enter the currency like usd , aed  : ')
+print(Currency(v,c))
