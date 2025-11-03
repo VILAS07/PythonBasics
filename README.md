@@ -116,6 +116,14 @@ Each folder contains the code I wrote on that day while learning Python step-by-
 
 ---
 
+---
+
+🧮 Day 19 – Lambda, Map & Filter Functions
+Practiced lambda, map & filter functions with multiple examples
+📂 Folder: Lambda Function 3
+
+---
+
 ### 🧪 **Extras**
 - `Output_Function`: Testing function outputs  
 - `.idea`: PyCharm project settings (ignore)
