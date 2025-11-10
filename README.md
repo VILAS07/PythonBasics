@@ -98,7 +98,7 @@ Each folder contains the code I wrote on that day while learning Python step-by-
 ---
 
 ### 🧑‍💻 **Day 15 & 16 – Functions**
-- Writing functions
+- Writing functions  
 - Parameters, return values  
 📂 Folders: `Functions`, `Functions 30`
 
@@ -113,6 +113,12 @@ Each folder contains the code I wrote on that day while learning Python step-by-
 ### 🕹️ **Day 18 – Mini Python Game**
 - Applied concepts through a simple game project  
 📂 Folder: `GAME`
+
+---
+
+### 🧮 **Day 19 – Lambda, Map & Filter Functions**
+- Practiced lambda, map & filter functions with multiple examples  
+📂 Folder: `Lambda Function 3`
 
 ---
 
