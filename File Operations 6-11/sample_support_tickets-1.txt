@@ -1,0 +1,10 @@
+TicketID: 1001 | Name: Emily Carter | Issue: Login failed | Priority: High | Date: 2023-10-01
+TicketID: 1002 | Name: John Miller | Issue: Payment error | Priority: Medium | Date: 2023-10-02
+TicketID: 1003 | Name: Sophia Lee | Issue: Account locked | Priority: High | Date: 2023-10-03
+TicketID: 1004 | Name: Daniel White | Issue: Forgot password | Priority: Low | Date: 2023-10-04
+TicketID: 1005 | Name: Mia Davis | Issue: Bug report | Priority: Medium | Date: 2023-10-05
+TicketID: 1006 | Name: James Brown | Issue: Unable to access files | Priority: High | Date: 2023-10-05
+TicketID: 1007 | Name: Emily Carter | Issue: Slow performance | Priority: Medium | Date: 2023-10-06
+TicketID: 1008 | Name: Sophia Lee | Issue: Login failed | Priority: High | Date: 2023-10-06
+TicketID: 1009 | Name: Olivia Wilson | Issue: Error 404 on dashboard | Priority: Low | Date: 2023-10-07
+TicketID: 1010 | Name: John Miller | Issue: Account locked | Priority: High | Date: 2023-10-08
