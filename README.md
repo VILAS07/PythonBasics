@@ -144,4 +144,4 @@ Each folder contains the code I wrote on that day while learning Python step-by-
 
 ---
 
-💚 **Happy Learning & Coding!**
+💚 **Happy Learning & Coding!
