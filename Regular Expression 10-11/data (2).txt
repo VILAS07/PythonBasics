@@ -1,0 +1,15 @@
+Customer Report - November 2025
+
+1. Name: Alice Johnson | Email: alice.j@techmail.com | Phone: +1-202-555-0143 | ID: EMP-9283 | Date Joined: 11/02/2021
+2. Name: Bob Martin | Email: bob_m@web.co.in | Phone: (044)-27561234 | ID: EMP-1022 | Date Joined: 06/12/2022
+3. Name: Charlie D’Souza | Email: charlie.dsouza@workplace.org | Phone: 98765-43210 | ID: EMP-5541 | Date Joined: 23/05/2023
+4. Name: Diana Prince | Email: diana.prince@hero.net | Phone: +91 98470 32109 | ID: EMP-3499 | Date Joined: 14/09/2020
+5. Name: Edward Blake | Email: ed.blake@secure-mail.com | Phone: 2025550182 | ID: EMP-7780 | Date Joined: 09/03/2019
+
+System Logs:
+  • Login from IP 192.168.0.15 by user alice.j
+  • Login from IP 10.0.1.54 by user bob_m
+  • Access denied for IP 172.16.5.101
+  • Password reset requested for user ed.blake on 2025-11-09
+
+Backup created on 2025-11-10 09:45:33
