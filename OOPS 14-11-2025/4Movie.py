@@ -22,6 +22,7 @@ class Movie:
         a=(200-self.seats_avail)*self.ticket_price
         print(f'Total Earning : {a} Rupees')
         return a
+
 movie1=Movie('OnePiece','Anime',500,200)
 movie2=Movie('Interstellar','SciFi',1000,200)
 movie1.display_info()
