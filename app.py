@@ -1,8 +1,9 @@
 import streamlit as st
 import pandas as pd
-import plotly.express as px
 from datetime import datetime
 from supabase import create_client
+import plotly.express as px
+
 st.markdown("""
 <style>
 /* container holding the tabs */
@@ -23,6 +24,7 @@ supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 st.set_page_config(page_title="Expense Tracker", page_icon="💰", layout="wide")
 st.title("💰 Personal Expense Tracker")
+st.subheader(f"Welcome Back {st.session_state.username}")
 st.markdown("---")
 CATEGORIES = [
     "Food & Dining", "Transportation", "Shopping", "Entertainment",
