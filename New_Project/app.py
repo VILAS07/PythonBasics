@@ -18,13 +18,12 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-SUPABASE_URL = "https://uobulncmptvgsprjuqky.supabase.co"
-SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvYnVsbmNtcHR2Z3Nwcmp1cWt5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUyMjYyMTcsImV4cCI6MjA4MDgwMjIxN30.sthTRFsP9lNn9niVNvDgxPTw_NQfx9Aw9DeAwyMNDhU"
+SUPABASE_URL = st.secrets["SUPABASE_URL"]
+SUPABASE_KEY = st.secrets["SUPABASE_KEY"]
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 st.set_page_config(page_title="Expense Tracker", page_icon="💰", layout="wide")
 st.title("💰 Personal Expense Tracker")
-st.subheader(f"Welcome Back {st.session_state.username}")
 st.markdown("---")
 CATEGORIES = [
     "Food & Dining", "Transportation", "Shopping", "Entertainment",
@@ -96,7 +95,7 @@ if st.session_state.user is None:
                 st.error("Signup failed.")
 
     st.stop()  # Prevent loading app before login
-
+st.header(f"Welcome Back {st.session_state.username}")
 
 # ---------------- Fetch Expenses ----------------
 def fetch_expenses():
@@ -123,6 +122,7 @@ def add_expense(date, category, amount, description, payment_method):
         if response.data:
             st.success("Expense added successfully!")
             fetch_expenses()
+            st.rerun()
         else:
             st.error("Failed to add expense.")
     else:
