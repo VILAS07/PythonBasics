@@ -2,17 +2,15 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 from datetime import datetime
-from supabase import create_client
+from supabase import create_client, Client
 
 # ---------------- Supabase Setup ----------------
 SUPABASE_URL = "https://uobulncmptvgsprjuqky.supabase.co"
 SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvYnVsbmNtcHR2Z3Nwcmp1cWt5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUyMjYyMTcsImV4cCI6MjA4MDgwMjIxN30.sthTRFsP9lNn9niVNvDgxPTw_NQfx9Aw9DeAwyMNDhU"
-supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # ---------------- Page Config ----------------
 st.set_page_config(page_title="Expense Tracker", page_icon="💰", layout="wide")
-st.title("💰 Personal Expense Tracker")
-st.markdown("---")
 
 # ---------------- Categories & Payment Methods ----------------
 CATEGORIES = [
@@ -22,19 +20,74 @@ CATEGORIES = [
 ]
 PAYMENT_METHODS = ["Cash", "Credit Card", "Debit Card", "UPI", "Net Banking"]
 
+# ---------------- User Authentication ----------------
+if "user" not in st.session_state:
+    st.session_state.user = None
+
+if st.session_state.user is None:
+    st.title("Login / Signup")
+    tab1, tab2 = st.tabs(["Login", "Signup"])
+
+    # Login tab
+    with tab1:
+        email = st.text_input("Email", key="login_email")
+        password = st.text_input("Password", type="password", key="login_pass")
+        if st.button("Login"):
+            resp = supabase.auth.sign_in_with_password({"email": email, "password": password})
+            if resp.user:
+                st.session_state.user = resp.user
+                st.success("Logged in successfully!")
+
+            else:
+                st.error("Login failed. Check email/password.")
+
+    # Signup tab
+    with tab2:
+            username = st.text_input("Name", key="signup_username")
+            email = st.text_input("New Email", key="signup_email")
+            password = st.text_input("New Password", type="password", key="signup_pass")
+
+            if st.button("Signup"):
+                resp = supabase.auth.sign_up({"email": email, "password": password})
+
+                if resp.user:
+                    # Insert username into profiles table
+                    supabase.table("profiles").insert({
+                        "id": resp.user.id,
+                        "username": username
+                    }).execute()
+
+                    st.success("Account created! Please login.")
+                else:
+                    st.error("Signup failed.")
+
+
 # ---------------- Helper Functions ----------------
 def fetch_expenses():
-    """Fetch all expenses from Supabase and store in session_state."""
-    response = supabase.table("Expence").select("*").execute()
-    if response.data:
-        st.session_state.expenses = response.data
+    """Fetch expenses of the logged-in user from Supabase"""
+    if st.session_state.user:
+        response = supabase.table("Expence").select("*").eq("user_id", st.session_state.user.id).execute()
+        if response.data:
+            st.session_state.expenses = response.data
+        else:
+            st.session_state.expenses = []
+
+def fetch_user_profile():
+    user_id = st.session_state.user.id
+    resp = supabase.table("profiles").select("username").eq("user_id", user_id).execute()
+
+    if resp.data:
+        st.session_state.username = resp.data[0]["username"]
     else:
-        st.session_state.expenses = []
+        st.session_state.username = "User"
+
+
 
 def add_expense(date, category, amount, description, payment_method):
-    """Insert a new expense into Supabase and refresh session_state."""
+    """Insert a new expense into Supabase"""
     if category and amount > 0 and payment_method:
         data = {
+            "user_id": st.session_state.user.id,
             "Date": date.isoformat(),
             "Category": category,
             "Amount": amount,
@@ -44,28 +97,17 @@ def add_expense(date, category, amount, description, payment_method):
         response = supabase.table("Expence").insert(data).execute()
         if response.data:
             st.success("Expense added successfully!")
-            fetch_expenses()  # Refresh session_state after insert
+            fetch_expenses()
         else:
             st.error("Failed to add expense.")
     else:
         st.error("Please fill all required fields.")
 
 def get_expenses_df():
-    """Convert session_state expenses to a clean DataFrame."""
+    """Convert session_state expenses to DataFrame"""
     if 'expenses' in st.session_state and st.session_state.expenses:
         df = pd.DataFrame(st.session_state.expenses)
-        # Standardize column names
-        df.rename(columns={
-            'Date': 'date',
-            'Category': 'category',
-            'Amount': 'amount',
-            'Description': 'description',
-            'Payment_Method': 'payment_method'
-        }, inplace=True)
-        # Parse ISO8601 strings safely
-        df['date'] = pd.to_datetime(df['date'], utc=True, errors='coerce')
-        # Convert to naive datetime for comparison
-        df['date'] = df['date'].dt.tz_convert(None)
+        df['date'] = pd.to_datetime(df['date'], utc=True, errors='coerce').dt.tz_convert(None)
         return df
     return pd.DataFrame()
 
@@ -92,7 +134,7 @@ with st.sidebar:
     st.subheader("Data Management")
     if st.button("Clear Local Data"):
         st.session_state.expenses = []
-        df = pd.DataFrame()  # Clear local DataFrame
+        df = pd.DataFrame()
 
     if not df.empty:
         csv = df.to_csv(index=False)
@@ -104,8 +146,10 @@ with st.sidebar:
         )
 
 # ---------------- Main Content ----------------
+st.title(f"💰 {st.session_state.user.email}'s Expense Tracker")
+
 if df.empty:
-    st.info("👋 Welcome! Start by adding your first expense using the form on the left.")
+    st.info("👋 Start by adding your first expense using the form on the left.")
 else:
     # Summary Metrics
     col1, col2, col3, col4 = st.columns(4)
@@ -116,9 +160,8 @@ else:
     col4.metric("Top Category", top_category)
 
     st.markdown("---")
-
-    # Filters
     st.subheader("📊 Expense Analytics")
+
     col1, col2 = st.columns(2)
     date_range = st.date_input("Select Date Range", value=(df['date'].min(), df['date'].max()))
     selected_categories = st.multiselect("Filter by Category", options=CATEGORIES, default=CATEGORIES)
@@ -134,19 +177,18 @@ else:
     if filtered_df.empty:
         st.warning("No data available for the selected filters.")
     else:
-        # Pie chart: Category-wise
+        # Pie chart
         category_totals = filtered_df.groupby('category')['amount'].sum().reset_index()
         fig_pie = px.pie(category_totals, values='amount', names='category', title='Expenses by Category', hole=0.4)
-        fig_pie.update_traces(textposition='inside', textinfo='percent+label')
         st.plotly_chart(fig_pie, use_container_width=True)
 
-        # Bar chart: Payment Method
+        # Bar chart
         payment_totals = filtered_df.groupby('payment_method')['amount'].sum().reset_index()
         fig_payment = px.bar(payment_totals, x='payment_method', y='amount', title='Expenses by Payment Method',
                              color='amount', color_continuous_scale='Blues')
         st.plotly_chart(fig_payment, use_container_width=True)
 
-        # Daily Trend
+        # Daily trend
         daily_expenses = filtered_df.groupby('date')['amount'].sum().reset_index()
         fig_line = px.line(daily_expenses, x='date', y='amount', title='Daily Expense Trend', markers=True)
         st.plotly_chart(fig_line, use_container_width=True)
@@ -169,7 +211,6 @@ else:
         col1, col2 = st.columns(2)
         col1.dataframe(monthly_summary.style.format({'Total Spent': '₹{:,.2f}', 'Average': '₹{:,.2f}'}),
                        use_container_width=True, hide_index=True)
-
         fig_monthly = px.bar(monthly_summary, x='Month', y='Total Spent', title='Monthly Spending', text='Total Spent')
         fig_monthly.update_traces(texttemplate='₹%{text:,.0f}', textposition='outside')
         col2.plotly_chart(fig_monthly, use_container_width=True)
