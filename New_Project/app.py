@@ -3,6 +3,11 @@ import pandas as pd
 from datetime import datetime
 from supabase import create_client
 import plotly.express as px
+import logging
+logging.basicConfig(level=logging.INFO)
+
+
+
 
 st.markdown("""
 <style>
@@ -38,6 +43,7 @@ if "user" not in st.session_state:
 
 if "username" not in st.session_state:
     st.session_state.username = "User"
+
 
 if st.session_state.user is None:
     st.title("Login / Signup")
